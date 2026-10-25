@@ -275,15 +275,24 @@ with tab1:
     new_disposable = disposable + total_sim_cuts
     new_sr = new_disposable / applicant_income
 
-    sim_dict = dict(applicant_dict)
-    sim_dict["Eating_Out"] -= cut_dining
-    sim_dict["Entertainment"] -= cut_ent
-    sim_dict["Miscellaneous"] -= cut_misc
+    sim_expenses = dict(applicant_expenses)
+    sim_expenses["Eating_Out"] -= cut_dining
+    sim_expenses["Entertainment"] -= cut_ent
+    sim_expenses["Miscellaneous"] -= cut_misc
+
+    sim_dict = {
+        "Income": applicant_income,
+        "Age": applicant_age,
+        "Dependents": applicant_dependents,
+        "Occupation": applicant_occ,
+        "City_Tier": applicant_tier,
+        **sim_expenses,
+    }
 
     sim_ml = predict_loan_approval(bundle, sim_dict, new_disposable)
     new_prob = sim_ml["approval_prob"]
     new_loan = sim_ml["eligible_loan_amount"]
-    new_health = calculate_health_score(applicant_income, sim_dict)
+    new_health = calculate_health_score(applicant_income, sim_expenses)
 
     r1, r2, r3, r4 = st.columns(4)
     r1.metric("New AI Approval Probability", f"{new_prob:.1%}", delta=f"+{(new_prob - approval_prob):.1%}")
