@@ -35,7 +35,7 @@ def predict_loan_approval(bundle, applicant_dict, disposable):
     }
 
 def calculate_health_score(income, expenses):
-    total_exp = sum(expenses.values())
+    total_exp = sum(expenses[k] for k in EXPENSES if k in expenses)
     disposable = income - total_exp
     sr = disposable / income
     dti = expenses["Loan_Repayment"] / income
